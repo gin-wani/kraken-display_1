@@ -1,117 +1,102 @@
 <!DOCTYPE html>
+
 <html lang="ja">
-<head>
-<meta charset="UTF-8">
-<title>Kraken LCD</title>
-<style>
-body { margin:0; background:black; color:white; font-family:Arial,sans-serif; width:640px; height:640px; display:flex; flex-direction:column; justify-content:space-between; align-items:center;}
-.top-space, .bottom-space { height:40px; }
-.time { font-size:64px; font-weight:bold; }
-.section-title { font-size:48px; font-weight:bold; }
-.two-col { display:flex; flex-direction:row; justify-content:space-between; width:600px; }
-.rpm, .percent { font-size:48px; font-weight:bold; text-align:center; }
-.temp { font-size:64px; font-weight:bold; text-align:center; }
-.bar-frame { width:260px; height:24px; background:#333; border-radius:12px; overflow:hidden; margin:0 auto; }
-.bar-fill { height:100%; background:#00BFFF; }
-.block { display:flex; flex-direction:column; align-items:center; width:290px; }
-</style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
 
-<div class="top-space"></div>
-<div class="time" id="time">--:--:--</div>
+    <title>NZXT Web Integration Monitor</title>
 
-<div id="row2" class="two-col">
-    <div class="block">
-        <div class="section-title">CPU</div>
-        <div class="rpm" id="cpuFan">---- rpm</div>
-        <div class="bar-frame"><div class="bar-fill" id="cpuLoadBar"></div></div>
-        <div class="percent" id="cpuLoad">-- %</div>
-        <div class="temp" id="cpuTemp">-- ℃</div>
-    </div>
-    <div class="block">
-        <div class="section-title">GPU</div>
-        <div class="rpm" id="gpuFan">---- rpm</div>
-        <div class="bar-frame"><div class="bar-fill" id="gpuLoadBar"></div></div>
-        <div class="percent" id="gpuLoad">-- %</div>
-        <div class="temp" id="gpuTemp">-- ℃</div>
-    </div>
-</div>
+    <style>
+      /* --- Kraken上でも見えるように大きめのフォント設定 --- */
 
-<div class="section-title">LIQUID</div>
-<div class="temp" id="liquidTemp">-- ℃</div>
-<div class="bottom-space"></div>
+      body {
+        font-family: Arial, sans-serif;
 
-<script>
-// 時計更新
-function updateTime() {
-    const now = new Date();
-    document.getElementById("time").innerText = ("0"+now.getHours()).slice(-2)+":"+
-                                               ("0"+now.getMinutes()).slice(-2)+":"+
-                                               ("0"+now.getSeconds()).slice(-2);
-}
-setInterval(updateTime,1000);
-updateTime();
+        color: white;
 
-// スムージング履歴
-let hist = { cpuTemp:[], cpuLoad:[], cpuFan:[], gpuTemp:[], gpuLoad:[], gpuFan:[], liquid:[] };
-function smooth(name,value,maxSamples){
-    let h = hist[name];
-    h.push(value);
-    if(h.length>maxSamples) h.shift();
-    return Math.round(h.reduce((a,b)=>a+b)/h.length);
-}
+        background: black;
 
-// ----------------------
-// 画面更新関数（以前の方式）
-// ----------------------
-// ここで、実際には Kraken CAM が提供する値を直接代入
-function getMonitoringData() {
-    // ここではサンプルとしてダミーデータを生成
-    return {
-        cpuFan: 1200 + Math.random()*400,
-        cpuLoad: Math.random()*100,
-        cpuTemp: 40 + Math.random()*30,
-        gpuFan: 1000 + Math.random()*400,
-        gpuLoad: Math.random()*100,
-        gpuTemp: 35 + Math.random()*40,
-        liquidTemp: 25 + Math.random()*8
-    };
-}
+        text-align: center;
 
-function updateDisplay() {
-    const d = getMonitoringData();
+        margin-top: 20px;
+      }
 
-    let cpuFan = smooth("cpuFan", d.cpuFan,5);
-    let cpuLoad = smooth("cpuLoad", d.cpuLoad,15);
-    let cpuTemp = smooth("cpuTemp", d.cpuTemp,10);
+      .value {
+        font-size: 48px;
 
-    let gpuFan = smooth("gpuFan", d.gpuFan,5);
-    let gpuLoad = smooth("gpuLoad", d.gpuLoad,15);
-    let gpuTemp = smooth("gpuTemp", d.gpuTemp,10);
+        font-weight: bold;
+      }
 
-    let liquid = smooth("liquid", d.liquidTemp,3);
+      .label {
+        font-size: 22px;
 
-    document.getElementById("cpuFan").innerText = cpuFan + " rpm";
-    document.getElementById("cpuLoad").innerText = cpuLoad.toFixed(0) + " %";
-    document.getElementById("cpuTemp").innerText = cpuTemp + " ℃";
-    document.getElementById("cpuLoadBar").style.width = cpuLoad*2.6 + "px";
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
 
-    document.getElementById("gpuFan").innerText = gpuFan + " rpm";
-    document.getElementById("gpuLoad").innerText = gpuLoad.toFixed(0) + " %";
-    document.getElementById("gpuTemp").innerText = gpuTemp + " ℃";
-    document.getElementById("gpuLoadBar").style.width = gpuLoad*2.6 + "px";
+  <body>
+    <div class="label">CPU 温度</div>
 
-    document.getElementById("liquidTemp").innerText = Math.round(liquid) + " ℃";
-}
+    <div id="cpuTemp" class="value">-- °C</div>
 
-setInterval(updateDisplay,1000);
-updateDisplay();
-</script>
-</body>
+    <div class="label">CPU 使用率</div>
+
+    <div id="cpuLoad" class="value">-- %</div>
+
+    <script>
+      /**
+
+     * --------------------------------------------------------
+
+     * Web Integration API を受け取るための必須設定
+
+     * CAM がこの window.nzxt.v1 にデータを送信してくる
+
+     * --------------------------------------------------------
+
+     */
+
+      window.nzxt = {
+        v1: {
+          /**
+
+         * CAM から約1秒ごとにモニタリングデータが渡されるイベント。
+
+         * data 内に CPU, GPU, RAM, Kraken などハードウェア情報が含まれる。
+
+         */
+
+          onMonitoringDataUpdate: (data) => {
+            console.log("受信データ:", data); // デバッグ用（ブラウザで確認可）
+
+            // -------------------------
+
+            // CPU 情報の取得（最初のCPUコアを使用）
+
+            // -------------------------
+
+            if (data.cpus && data.cpus.length > 0) {
+              const cpu = data.cpus[0];
+
+              // CPU温度
+
+              const temp = cpu.temperature ?? "--";
+
+              // CPUロード（負荷）
+
+              const load = cpu.load ?? "--";
+
+              // HTML に表示
+
+              document.getElementById("cpuTemp").innerText = `${d.temp.toFixed(0)} °C`;
+
+              document.getElementById("cpuLoad").innerText = load + " %";
+              //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
+            }
+          },
+        },
+      };
+    </script>
+  </body>
 </html>
-
-
-
-
-
