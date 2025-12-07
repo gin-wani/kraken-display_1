@@ -1,87 +1,101 @@
 <!DOCTYPE html>
+
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
+
     <title>NZXT Web Integration Monitor</title>
+
     <style>
-      /* スタイルはKrakenの画面に合わせて調整してください */
+      /* --- Kraken上でも見えるように大きめのフォント設定 --- */
+
       body {
-        background-color: black;
+        font-family: Arial, sans-serif;
+
         color: white;
-        font-family: sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        flex-direction: column;
+
+        background: black;
+
+        text-align: center;
+
+        margin-top: 20px;
       }
-      .info-item {
-        margin: 5px 0;
-        font-size: 16px; /* Kraken Elite (640x640)向けなどに調整 */
+
+      .value {
+        font-size: 48px;
+
+        font-weight: bold;
+      }
+
+      .label {
+        font-size: 22px;
+
+        margin-bottom: 10px;
       }
     </style>
   </head>
+
   <body>
-    <div class="info-item">CPU Temp: <span id="cpuTemp">--</span>°C</div>
-    <div class="info-item">CPU Load: <span id="cpuLoad">--</span>%</div>
-    <div class="info-item">GPU Temp: <span id="gpuTemp">--</span>°C</div>
-    <div class="info-item">GPU Load: <span id="gpuLoad">--</span>%</div>
-    <div class="info-item">RAM Usage: <span id="ramUsage">--</span>%</div>
+    <div class="label">CPU 温度</div>
+
+    <div id="cpuTemp" class="value">-- °C</div>
+
+    <div class="label">CPU 使用率</div>
+
+    <div id="cpuLoad" class="value">-- %</div>
 
     <script>
       /**
-       * --------------------------------------------------------
-       * Web Integration API を受け取るための必須設定
-       * CAM がこの window.nzxt.v1 にデータを送信してくる
-       * --------------------------------------------------------
-       */
 
-      // NZXT CAMがこの関数を見つけると、データの送信を開始します
-      if (window.nzxt && window.nzxt.v1) {
-        window.nzxt.v1.onMonitoringDataUpdate = (data) => {
-          const { cpus, gpus, ram } = data;
+     * --------------------------------------------------------
 
-          // CPUデータ
-          if (cpus && cpus.length > 0) {
-            // 一般的に最初の要素が全体のデータを示します
-            document.getElementById("cpuTemp").textContent = Math.round(cpus[0].temperature);
-            document.getElementById("cpuLoad").textContent = Math.round(cpus[0].load);
-          }
+     * Web Integration API を受け取るための必須設定
 
-          // GPUデータ
-          if (gpus && gpus.length > 0) {
-            // 一般的に最初の要素が全体のデータを示します
-            document.getElementById("gpuTemp").textContent = Math.round(gpus[0].temperature);
-            document.getElementById("gpuLoad").textContent = Math.round(gpus[0].load);
-          }
+     * CAM がこの window.nzxt.v1 にデータを送信してくる
 
-          // RAMデータ
-          if (ram) {
-            document.getElementById("ramUsage").textContent = Math.round(ram.load);
-          }
-        };
-      }
+     * --------------------------------------------------------
 
-      console.log(data.kraken[0]); // デバッグ用（ブラウザで確認可）
+     */
 
-      // -------------------------
-      // CPU 情報の取得（最初のCPUコアを使用）
-      // -------------------------
+      window.nzxt = {
+        v1: {
+          /**
 
-      // if (data.cpus && data.cpus.length > 0) {
-      //  const cpu = data.cpus[0];
-      //  // CPU温度
-      //  const temp = cpu.temperature ?? "--";
-      //  // CPUロード（負荷）
-      //  const load = cpu.load ?? "--";
-      //  // HTML に表示
-      //  document.getElementById("cpuTemp").innerText = temp + " °C";
-      //document.getElementById("cpuLoad").innerText = load + " %";
-      //}
-      //      },
-      //    },
-      //  };
+         * CAM から約1秒ごとにモニタリングデータが渡されるイベント。
+
+         * data 内に CPU, GPU, RAM, Kraken などハードウェア情報が含まれる。
+
+         */
+
+          onMonitoringDataUpdate: (data) => {
+            console.log("受信データ:", data); // デバッグ用（ブラウザで確認可）
+
+            // -------------------------
+
+            // CPU 情報の取得（最初のCPUコアを使用）
+
+            // -------------------------
+
+            if (data.cpus && data.cpus.length > 0) {
+              const cpu = data.cpus[0];
+
+              // CPU温度
+
+              const temp = cpu.temperature ?? "--";
+
+              // CPUロード（負荷）
+
+              const load = cpu.load ?? "--";
+
+              // HTML に表示
+
+              document.getElementById("cpuTemp").innerText = temp + " °C";
+
+              document.getElementById("cpuLoad").innerText = load + " %";
+            }
+          },
+        },
+      };
     </script>
   </body>
 </html>
