@@ -48,7 +48,7 @@
 
             if (data.cpus && data.cpus.length > 0) {
               const cpu = data.cpus[0];
-
+              update_cpu(cpus[0].temperature);
               // CPU温度
               const temp = cpu.temperature ?? "--";
 
