@@ -1,90 +1,67 @@
 <!DOCTYPE html>
-
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-
     <title>NZXT Web Integration Monitor</title>
-
     <style>
       /* --- Kraken上でも見えるように大きめのフォント設定 --- */
-
       body {
         font-family: Arial, sans-serif;
-
         color: white;
-
         background: black;
-
         text-align: center;
-
         margin-top: 20px;
       }
-
       .value {
         font-size: 48px;
-
         font-weight: bold;
       }
-
       .label {
         font-size: 22px;
-
         margin-bottom: 10px;
       }
     </style>
   </head>
-
   <body>
     <div class="label">CPU 温度</div>
-
     <div id="cpuTemp" class="value">-- °C</div>
-
     <div class="label">CPU 使用率</div>
-
     <div id="cpuLoad" class="value">-- %</div>
 
     <script>
       /**
+       * --------------------------------------------------------
+       * Web Integration API を受け取るための必須設定
+       * CAM がこの window.nzxt.v1 にデータを送信してくる
+       * --------------------------------------------------------
+       */
 
-     * --------------------------------------------------------
+      window.nzxt = {
+        v1: {
+          onMonitoringDataUpdate: (data) => {
+            const { cpus, gpus, ram, kraken } = data;
+            //console.log("受信データ:", data); // デバッグ用（ブラウザで確認可）
 
-     * Web Integration API を受け取るための必須設定
+            // -------------------------
+            // CPU 情報の取得（最初のCPUコアを使用）
+            // -------------------------
 
-     * CAM がこの window.nzxt.v1 にデータを送信してくる
+            if (data.cpus && data.cpus.length > 0) {
+              const cpu = data.cpus[0];
 
-     * --------------------------------------------------------
+              // CPU温度
+              const temp = cpu.temperature ?? "--";
 
-     */
+              // CPUロード（負荷）
+              const load = cpu.load ?? "--";
 
-      window.nzxt.v1.onMonitoringDataUpdate = (data) => {
-        const { cpus, gpus, ram, kraken } = data;
-        //console.log("受信データ:", data); // デバッグ用（ブラウザで確認可）
-
-        // -------------------------
-
-        // CPU 情報の取得（最初のCPUコアを使用）
-
-        // -------------------------
-
-        if (data.cpus && data.cpus.length > 0) {
-          const cpu = data.cpus[0];
-
-          // CPU温度
-
-          const temp = cpu.temperature ?? "--";
-
-          // CPUロード（負荷）
-
-          const load = cpu.load ?? "--";
-
-          // HTML に表示
-
-          document.getElementById("cpuTemp").innerText = temp + " °C";
-
-          document.getElementById("cpuLoad").innerText = load + " %";
-          //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
-        }
+              // HTML に表示
+              document.getElementById("cpuTemp").innerText = temp + " °C";
+              document.getElementById("cpuLoad").innerText = load + " %";
+              //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
+            }
+          },
+        },
       };
     </script>
   </body>
