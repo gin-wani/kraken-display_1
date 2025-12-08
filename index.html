@@ -36,34 +36,36 @@
        * --------------------------------------------------------
        */
 
-      window.nzxt = window.nzxt || {};
-      window.nzxt.v1 = window.nzxt.v1 || {};
-      window.nzxt.v1.onMonitoringDataUpdate = (data) => {
-        const { cpus, gpus, ram, kraken } = data;
+      //import { MonitoringData } from "@nzxt/web-integrations-types/v1";
 
-        //console.log("受信データ:", data); // デバッグ用（ブラウザで確認可）
+      window.nzxt = {
+        v1: {
+          onMonitoringDataUpdate: (data) => {
+            const { cpus, gpus, ram, kraken } = data;
 
-        // -------------------------
-        // CPU 情報の取得（最初のCPUコアを使用）
-        // -------------------------
+            //console.log("受信データ:", data); // デバッグ用（ブラウザで確認可）
 
-        //if (data.cpus && data.cpus.length > 0) {
-        const cpu = data.cpus[0];
+            // -------------------------
+            // CPU 情報の取得（最初のCPUコアを使用）
+            // -------------------------
 
-        // CPU温度
-        const temp = cpu.temperature ?? "--";
+            //if (data.cpus && data.cpus.length > 0) {
+            const cpu = data.cpus[0];
 
-        // CPUロード（負荷）
-        const load = cpu.load ?? "--";
+            // CPU温度
+            const temp = cpu.temperature ?? "--";
 
-        // HTML に表示
-        document.getElementById("cpuTemp").innerText = temp + " °C";
-        document.getElementById("cpuLoad").innerText = load + " %";
-        //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
-        //}
+            // CPUロード（負荷）
+            const load = cpu.load ?? "--";
+
+            // HTML に表示
+            document.getElementById("cpuTemp").innerText = temp + " °C";
+            document.getElementById("cpuLoad").innerText = load + " %";
+            //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
+            //}
+          },
+        },
       };
-      //  },
-      //};
     </script>
   </body>
 </html>
