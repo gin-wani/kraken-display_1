@@ -36,10 +36,12 @@
        * --------------------------------------------------------
        */
 
-      window.nzxt = {
-        v1: {
-          onMonitoringDataUpdate: (data) => {
-            const { cpus, gpus, ram, kraken } = data;
+      //window.nzxt = {
+      //  v1: {
+      //    onMonitoringDataUpdate: (data) => {
+      //      const { cpus, gpus, ram, kraken } = data;
+      if (window.nzxt && window.nzxt.v1) {
+          window.nzxt.v1.onMonitoringDataUpdate(data) => {
             //console.log("受信データ:", data); // デバッグ用（ブラウザで確認可）
 
             // -------------------------
@@ -60,8 +62,8 @@
               document.getElementById("cpuLoad").innerText = load + " %";
               //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
             }
-          },
-        },
+          }
+      //  },
       };
     </script>
   </body>
