@@ -60,7 +60,7 @@
 
             // HTML に表示
             document.getElementById("cpuTemp").innerText = Math.round(temp) + " °C";
-            document.getElementById("cpuLoad").innerText = load + " %";
+            document.getElementById("cpuLoad").innerText = Math.round(load * 100) + " %";
             //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
             //}
           },
