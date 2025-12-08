@@ -59,7 +59,7 @@
             const load = cpu.load ?? "--";
 
             // HTML に表示
-            document.getElementById("cpuTemp").innerText = temp + " °C";
+            document.getElementById("cpuTemp").innerText = Math.round(temp) + " °C";
             document.getElementById("cpuLoad").innerText = load + " %";
             //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
             //}
