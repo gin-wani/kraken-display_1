@@ -60,22 +60,22 @@
             const gpu = data.gpus[0];
 
             // CPU温度
-            const CpuTemp = cpu.temperature ?? "--";
+            const cputemp = cpu.temperature ?? "--";
             // CPUロード（負荷）
-            const CpuLoad = cpu.load ?? "--";
+            const cpuload = cpu.load ?? "--";
 
             // GPU温度
-            const GpuTemp = gpu.temperature ?? "--";
+            const gputemp = gpu.temperature ?? "--";
             // GPUロード（負荷）
-            const GpuLoad = gpu.load ?? "--";
+            const gpuload = gpu.load ?? "--";
 
             // HTML に表示
-            document.getElementById("cpuTemp").innerText = Math.round(CpuTemp) + " °C";
-            document.getElementById("cpuLoad").innerText = Math.round(CpuLoad * 100) + " %";
+            document.getElementById("CpuTemp").innerText = Math.round(cputemp) + " °C";
+            document.getElementById("CpuLoad").innerText = Math.round(cpuload * 100) + " %";
             //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
             //}
-            document.getElementById("gpuTemp").innerText = Math.round(GpuTemp) + " °C";
-            document.getElementById("gpuLoad").innerText = Math.round(GpuLoad * 100) + " %";
+            document.getElementById("GpuTemp").innerText = Math.round(gputemp) + " °C";
+            document.getElementById("GpuLoad").innerText = Math.round(gpuload * 100) + " %";
           },
         },
       };
