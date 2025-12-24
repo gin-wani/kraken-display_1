@@ -2,161 +2,43 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <title>Kraken Display Custom</title>
+    <title>NZXT Web Integration Monitor</title>
     <style>
+      /* --- Kraken上でも見えるように大きめのフォント設定 --- */
       body {
-        margin: 0;
-        background: black;
+        font-family: Arial, sans-serif;
         color: white;
-        font-family: "Segoe UI", sans-serif;
-        width: 640px;
-        height: 640px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
+        background: black;
+        text-align: center;
+        margin-top: 20px;
       }
-
-      #top-space {
-        height: 40px;
-      }
-
-      #time {
-        font-size: 64px;
+      .value {
+        font-size: 48px;
         font-weight: bold;
       }
-
-      #bottom-space {
-        height: 40px;
-      }
-
-      /* CPU・GPUセクション */
-      #row2 {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 600px;
-      }
-
-      .block {
-        width: 290px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .label-title {
-        font-size: 48px;
-        margin-bottom: 8px;
-        font-weight: bold;
-      }
-
-      .rpm {
-        font-size: 48px;
+      .label {
+        font-size: 22px;
+        margin-top: 20px;
         margin-bottom: 10px;
-      }
-
-      .bar-frame {
-        width: 260px;
-        height: 24px;
-        background: #333;
-        border-radius: 12px;
-        overflow: hidden;
-      }
-
-      .bar-fill {
-        height: 100%;
-        background: #00bfff;
-      }
-
-      .percent {
-        font-size: 48px;
-        margin: 10px 0;
-        font-weight: bold;
-      }
-
-      .temp {
-        font-size: 64px;
-        font-weight: bold;
-      }
-
-      /* LIQUIDセクション */
-      #liquid-label {
-        font-size: 48px;
-        font-weight: bold;
-      }
-
-      #liquid-temp {
-        font-size: 64px;
-        font-weight: bold;
       }
     </style>
   </head>
   <body>
-    <div id="top-space"></div>
-    <div id="time">--:--:--</div>
-
-    <!-- 2段目 -->
-    <div id="row2">
-      <div class="block">
-        <div class="label-title">CPU</div>
-        <div class="rpm" id="cpuFan">---- rpm</div>
-
-        <div class="bar-frame">
-          <div class="bar-fill" id="cpuLoadBar"></div>
-        </div>
-
-        <div class="percent" id="cpuLoadText">-- %</div>
-        <div class="temp" id="cpuTemp">-- ℃</div>
-      </div>
-
-      <div class="block">
-        <div class="label-title">GPU</div>
-        <div class="rpm" id="gpuFan">---- rpm</div>
-
-        <div class="bar-frame">
-          <div class="bar-fill" id="gpuLoadBar"></div>
-        </div>
-
-        <div class="percent" id="gpuLoadText">-- %</div>
-        <div class="temp" id="gpuTemp">-- ℃</div>
-      </div>
-    </div>
-
-    <!-- 3段目 LIQUID -->
-    <div id="liquid-label">LIQUID</div>
-    <div id="liquid-temp">-- ℃</div>
-
-    <div id="bottom-space"></div>
+    <div class="label">CPU 温度</div>
+    <div id="cpuTemp" class="value">-- °C</div>
+    <div class="label">CPU 使用率</div>
+    <div id="cpuLoad" class="value">-- %</div>
 
     <script>
-      // =========================
-      // 時刻
-      // =========================
-      function updateTime() {
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, "0");
-        const mm = String(now.getMinutes()).padStart(2, "0");
-        const ss = String(now.getSeconds()).padStart(2, "0");
-        document.getElementById("time").innerText = `${hh}:${mm}:${ss}`;
-      }
-      setInterval(updateTime, 1000);
-      updateTime();
+      /**
+       * --------------------------------------------------------
+       * Web Integration API を受け取るための必須設定
+       * CAM がこの window.nzxt.v1 にデータを送信してくる
+       * --------------------------------------------------------
+       */
 
-      // =========================
-      // デモデータ（後で実データに切替）
-      // =========================
-      //function fakeData(){
-      //  return {
-      //    cpuFan: 1200 + Math.random()*500,
-      //    gpuFan: 1000 + Math.random()*600,
-      //    cpuLoad: Math.random()*100,
-      //    gpuLoad: Math.random()*100,
-      //    cpuTemp: 40 + Math.random()*35,
-      //    gpuTemp: 35 + Math.random()*40,
-      //    liquidTemp: 25 + Math.random()*8
-      //  };
-      //}
+      //import { MonitoringData } from "@nzxt/web-integrations-types/v1";
+
       window.nzxt = {
         v1: {
           onMonitoringDataUpdate: (data) => {
@@ -170,50 +52,21 @@
 
             //if (data.cpus && data.cpus.length > 0) {
             const cpu = data.cpus[0];
-            const gpu = data.gpus[0];
-            //const ram = data.ram;
-            const Kraken = data.kraken;
 
-            // 温度
-            const cpuTemp = cpu.temperature ?? "--";
-            const gpuTemp = gpu.temperature ?? "--";
+            // CPU温度
+            const temp = cpu.temperature ?? "--";
 
-            // ロード（負荷）
-            const cpuLoad = cpu.load ?? "--";
-            const gpuLoad = gpu.load ?? "--";
+            // CPUロード（負荷）
+            const load = cpu.load ?? "--";
 
-            // fan_speed
-            const cpuFan = cpu.fanSpeed ?? "--";
-            const gpuFan = gpu.fanSpeed ?? "--";
-
-            // liquidTemp
-            const liquidTemp = Kraken.liquidTemperature ?? "--";
+            // HTML に表示
+            document.getElementById("cpuTemp").innerText = Math.round(temp) + " °C";
+            document.getElementById("cpuLoad").innerText = Math.round(load * 100) + " %";
+            //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
+            //}
           },
         },
       };
-
-      // =========================
-      // 画面更新
-      // =========================
-      function updateDisplay() {
-        //  const d = fakeData();
-
-        document.getElementById("cpuFan").innerText = Math.round(cpuFan) + "rpm";
-        document.getElementById("gpuFan").innerText = Math.round(gpuFan) + "rpm";
-
-        document.getElementById("cpuLoadBar").style.width = `${cpuLoad * 2.6}px`;
-        document.getElementById("gpuLoadBar").style.width = `${gpuLoad * 2.6}px`;
-
-        document.getElementById("cpuLoadText").innerText = `${cpuLoad.toFixed(0)} %`;
-        document.getElementById("gpuLoadText").innerText = `${gpuLoad.toFixed(0)} %`;
-
-        document.getElementById("cpuTemp").innerText = `${cpuTemp.toFixed(0)} ℃`;
-        document.getElementById("gpuTemp").innerText = `${gpuTemp.toFixed(0)} ℃`;
-        document.getElementById("liquid-temp").innerText = `${liquidTemp.toFixed(1)} ℃`;
-      }
-
-      setInterval(updateDisplay, 1000);
-      updateDisplay();
     </script>
   </body>
 </html>
