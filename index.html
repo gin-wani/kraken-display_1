@@ -13,11 +13,11 @@
         margin-top: 20px;
       }
       .value {
-        font-size: 48px;
+        font-size: 36px;
         font-weight: bold;
       }
       .label {
-        font-size: 22px;
+        font-size: 24px;
         margin-top: 20px;
         margin-bottom: 10px;
       }
@@ -25,9 +25,14 @@
   </head>
   <body>
     <div class="label">CPU 温度</div>
-    <div id="cpuTemp" class="value">-- °C</div>
+    <div id="CpuTemp" class="value">-- °C</div>
     <div class="label">CPU 使用率</div>
-    <div id="cpuLoad" class="value">-- %</div>
+    <div id="CpuLoad" class="value">-- %</div>
+
+    <div class="label">GPU 温度</div>
+    <div id="GpuTemp" class="value">-- °C</div>
+    <div class="label">GPU 使用率</div>
+    <div id="GpuLoad" class="value">-- %</div>
 
     <script>
       /**
@@ -52,21 +57,116 @@
 
             //if (data.cpus && data.cpus.length > 0) {
             const cpu = data.cpus[0];
+            const gpu = data.gpus[0];
 
             // CPU温度
-            const temp = cpu.temperature ?? "--";
-
+            const CpuTemp = cpu.temperature ?? "--";
             // CPUロード（負荷）
-            const load = cpu.load ?? "--";
+            const CpuLoad = cpu.load ?? "--";
+
+            // GPU温度
+            const GpuTemp = gpu.temperature ?? "--";
+            // GPUロード（負荷）
+            const GpuLoad = gpu.load ?? "--";
 
             // HTML に表示
-            document.getElementById("cpuTemp").innerText = Math.round(temp) + " °C";
-            document.getElementById("cpuLoad").innerText = Math.round(load * 100) + " %";
+            document.getElementById("cpuTemp").innerText = Math.round(CpuTemp) + " °C";
+            document.getElementById("cpuLoad").innerText = Math.round(CpuLoad * 100) + " %";
             //document.getElementById("cpuLoadText").innerText   = `${d.cpuLoad.toFixed(0)} %`;
             //}
+            document.getElementById("gpuTemp").innerText = Math.round(GpuTemp) + " °C";
+            document.getElementById("gpuLoad").innerText = Math.round(GpuLoad * 100) + " %";
           },
         },
       };
+
+      /*
+***export interface MonitoringData {
+  cpus: Cpu[];
+  gpus: Gpu[];
+  ram: Ram;
+  kraken: Kraken;
+}
+
+***export interface Cpu {
+  name: string;
+  manufacturer: string;
+  codeName: string;
+  socket: string;
+
+  //** Processor load (0..1) 
+  load: NumberOrUndefined;
+
+  numCores: NumberOrUndefined;
+  numThreads: NumberOrUndefined;
+
+  temperature: Celsius;
+  minTemperature: Celsius;
+  maxTemperature: Celsius;
+
+  frequency: Megahertz;
+  minFrequency: Megahertz;
+  maxFrequency: Megahertz;
+  stockFrequency: Megahertz;
+
+  fanSpeed: Rpm;
+  minFanSpeed: Rpm;
+  maxFanSpeed: Rpm;
+
+  //** Thermal Design Power 
+  tdp: Watts;
+
+  power: Watts;
+}
+
+***export interface Gpu {
+  name: string;
+
+  //** GPU load (0..1) 
+  load: NumberOrUndefined;
+
+  temperature: Celsius;
+  minTemperature: Celsius;
+  maxTemperature: Celsius;
+
+  frequency: Megahertz;
+  minFrequency: Megahertz;
+  maxFrequency: Megahertz;
+  stockFrequency: Megahertz;
+
+  fanSpeed: Rpm;
+  minFanSpeed: Rpm;
+  maxFanSpeed: Rpm;
+
+  power: Watts;
+}
+
+export interface Ram {
+  totalSize: Mebibytes;
+  inUse: Mebibytes;
+  modules: RamModule[];
+}
+
+export interface RamModule {
+  //** RAM kind (e.g. DDR5) 
+  kind: string;
+  size: Mebibytes;
+
+  //** Manufacturer and model name 
+  model: string;
+
+  frequency: Megahertz;
+  stockFrequency: Megahertz;
+}
+
+export interface Kraken {
+  liquidTemperature: Celsius;
+}
+
+
+
+
+    */
     </script>
   </body>
 </html>
