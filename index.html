@@ -108,9 +108,8 @@
           #444 calc(var(--sweep-angle) * var(--value) / 100) var(--sweep-angle),
           transparent var(--sweep-angle)
         );
-
-        -webkit-mask: radial-gradient(circle, transparent 58%, black 59%);
-        mask: radial-gradient(circle, transparent 58%, black 59%);
+        /*-webkit-mask: radial-gradient(circle, transparent 58%, black 59%);*/
+        mask: radial-gradient(circle, transparent 50%, black 51%);
 
         transition: background 0.4s ease;
       }
@@ -120,8 +119,8 @@
         position: absolute;
         left: 50%;
         top: 50%;
-        transform: translate(-50%, -50%) translateY(-10px);
-        font-size: 36px;
+        transform: translate(-50%, -50%) translateY(-20px);
+        font-size: 48px;
         font-weight: 600;
       }
 
@@ -133,8 +132,17 @@
         text-align: center;
         font-size: 90px;
         font-weight: 600;
-        letter-spacing: 0.1em; // ★ 追加
+
+        font-family: Consolas, "Courier New", monospace;
+        /*
+        font-family: "Roboto Mono", monospace;
+        font-family: Consolas, "Courier New", monospace;
         font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        */
+
+        /*
+        letter-spacing: 0.1em; // ★ 追加
+        */
         /*font-stretch: 100%; //font-stretch非対応の場合は、下行に変更*/
         transform: scaleY(1.1);
       }
@@ -246,8 +254,8 @@
             // CPU 表示
             cpuGauge.style.setProperty("--value", cpuLoadVal);
             cpuGauge.style.setProperty("--gauge-color", gaugeColor(cpuLoadVal));
-            cpuLoad.textContent = `${cpuLoadVal}%`;
-            cpuTemp.textContent = `${cputemp}℃`;
+            cpuLoad.textContent = `${cpuLoadVal} %`;
+            cpuTemp.textContent = `${cputemp} ℃`;
 
             // GPU温度
             const gputemp = Math.round(gpu.temperature) ?? "--";
