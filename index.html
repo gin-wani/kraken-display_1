@@ -17,8 +17,8 @@
       }
 
       /* ===============================
-   640x640 円形ディスプレイ
-   =============================== */
+       640x640 円形ディスプレイ
+       =============================== */
       .display {
         width: 640px;
         height: 640px;
@@ -28,8 +28,8 @@
         align-items: center;
       }
       /* ===============================
-   1段目：冷却水温
-   =============================== */
+       1段目：冷却水温
+       =============================== */
       .liquid {
         margin-top: 0px;
         margin-bottom: -65px;
@@ -43,23 +43,10 @@
       .liquid .temp {
         font-size: 72px;
       }
-      /* ===============================
-   1段目：時計
-   =============================== 
-      .clock {
-        margin-top: 30px;
-        font-size: 60px;
-        font-weight: 600;
-        letter-spacing: 0.1em; // ★ 追加 
-        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-        //font-stretch: 100%; //font-stretch非対応の場合は、下行に変更
-        transform: scaleY(1.2);
-      }
-      */
 
       /* ===============================
-   2段目：CPU / GPU
-   =============================== */
+        2段目：CPU / GPU
+       =============================== */
       .stats {
         display: flex;
         justify-content: space-between;
@@ -83,8 +70,8 @@
       }
 
       /* ===============================
-   ゲージ＋負荷率（重ね表示）
-   =============================== */
+       ゲージ＋負荷率（重ね表示）
+       =============================== */
       .gauge-wrapper {
         position: relative;
         width: 200px;
@@ -125,8 +112,8 @@
       }
 
       /* ===============================
-   3段目：時計
-   =============================== */
+       3段目：時計
+       =============================== */
       .clock {
         margin-top: -40px;
         text-align: center;
@@ -146,24 +133,6 @@
         /*font-stretch: 100%; //font-stretch非対応の場合は、下行に変更*/
         transform: scaleY(1.1);
       }
-
-      /* ===============================
-   3段目：冷却水温
-   =============================== 
-      .liquid {
-        margin-top: -30px;
-        margin-bottom: 60px;
-        text-align: center;
-      }
-
-      .liquid .label {
-        font-size: 36px;
-      }
-
-      .liquid .temp {
-        font-size: 72px;
-      }
-      */
     </style>
   </head>
 
@@ -269,7 +238,7 @@
 
             // 水温
             const liquidTemperature = kraken.liquidTemperature ?? "--";
-            document.getElementById("liquidTemp").innerText = Math.round(liquidTemperature) + " ℃";
+            document.getElementById("liquidTemp").innerText = Math.round(liquidTemperature) + "℃";
 
             /*
             // HTML に表示
