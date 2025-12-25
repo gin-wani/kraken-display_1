@@ -34,8 +34,8 @@
     <div class="label">GPU 使用率</div>
     <div id="GpuLoad" class="value">-- %</div>
 
-    <div class="label">LiquidPompSpeed</div>
-    <div id="PompSpeed" class="value">-- rpm</div>
+    <div class="label">LiquidPumpSpeed</div>
+    <div id="PumpSpeed" class="value">-- rpm</div>
 
     <script>
       /**
@@ -73,7 +73,7 @@
             const gpuload = gpu.load ?? "--";
 
             // PompSpeed（rpm）
-            const pompspeed = cpu.fanSpeed ?? "--";
+            const pumpspeed = kraken.pumpSpeed ?? "--";
 
             // HTML に表示
             document.getElementById("CpuTemp").innerText = Math.round(cputemp) + " °C";
@@ -82,7 +82,7 @@
             //}
             document.getElementById("GpuTemp").innerText = Math.round(gputemp) + " °C";
             document.getElementById("GpuLoad").innerText = Math.round(gpuload * 100) + " %";
-            document.getElementById("PompSpeed").innerText = Math.round(pompspeed) + " rpm";
+            document.getElementById("PumpSpeed").innerText = Math.round(pumpspeed) + " rpm";
           },
         },
       };
