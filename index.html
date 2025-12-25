@@ -211,7 +211,7 @@
             // CPU温度
             const cputemp = Math.round(cpu.temperature) ?? "--";
             // CPUロード（負荷）
-            const cpuLoadVal = Math.round(cpu.load) ?? "--";
+            const cpuLoadVal = Math.round(cpu.load * 100) ?? "--";
             // CPU 表示
             cpuGauge.style.setProperty("--value", cpuLoadVal);
             cpuGauge.style.setProperty("--gauge-color", gaugeColor(cpuLoadVal));
