@@ -2,42 +2,188 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <title>NZXT Web Integration Monitor</title>
+    <title>PC Cooler Display Demo</title>
+
     <style>
-      /* --- Kraken上でも見えるように大きめのフォント設定 --- */
       body {
-        font-family: Arial, sans-serif;
-        color: white;
-        background: black;
+        margin: 0;
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: system-ui, sans-serif;
+        color: #fff;
+      }
+
+      /* ===============================
+   640x640 円形ディスプレイ
+   =============================== */
+      .display {
+        width: 640px;
+        height: 640px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* ===============================
+   1段目：時計
+   =============================== */
+      .clock {
+        margin-top: 30px;
+        font-size: 60px;
+        font-weight: 600;
+        letter-spacing: 0.1em; /* ★ 追加 */
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        /*font-stretch: 100%; //font-stretch非対応の場合は、下行に変更*/
+        transform: scaleY(1.2);
+      }
+
+      /* ===============================
+   2段目：CPU / GPU
+   =============================== */
+      .stats {
+        display: flex;
+        justify-content: space-between;
+        width: 90%;
+        margin-top: 40px;
+      }
+
+      .unit {
+        width: 45%;
         text-align: center;
-        margin-top: 20px;
       }
-      .value {
+
+      .unit .label {
         font-size: 36px;
-        font-weight: bold;
+        margin-bottom: 4px;
       }
-      .label {
-        font-size: 24px;
-        margin-top: 20px;
-        margin-bottom: 10px;
+
+      .unit .temp {
+        font-size: 72px;
+        margin-bottom: 20px;
+      }
+
+      /* ===============================
+   ゲージ＋負荷率（重ね表示）
+   =============================== */
+      .gauge-wrapper {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+      }
+
+      .gauge {
+        --value: 0;
+        --gauge-color: #4caf50;
+        --start-angle: 300deg;
+        --sweep-angle: 150deg;
+
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+
+        background: conic-gradient(
+          from var(--start-angle),
+          var(--gauge-color) 0deg calc(var(--sweep-angle) * var(--value) / 100),
+          #444 calc(var(--sweep-angle) * var(--value) / 100) var(--sweep-angle),
+          transparent var(--sweep-angle)
+        );
+
+        -webkit-mask: radial-gradient(circle, transparent 58%, black 59%);
+        mask: radial-gradient(circle, transparent 58%, black 59%);
+
+        transition: background 0.4s ease;
+      }
+
+      /* ★ ゲージ中央やや上に表示する負荷率 */
+      .gauge-load {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) translateY(-10px);
+        font-size: 36px;
+        font-weight: 600;
+      }
+
+      /* ===============================
+   3段目：冷却水温
+   =============================== */
+      .liquid {
+        margin-top: -30px;
+        margin-bottom: 60px;
+        text-align: center;
+      }
+
+      .liquid .label {
+        font-size: 36px;
+      }
+
+      .liquid .temp {
+        font-size: 72px;
       }
     </style>
   </head>
+
   <body>
-    <div class="label">CPU 温度</div>
-    <div id="CpuTemp" class="value">-- °C</div>
-    <div class="label">CPU 使用率</div>
-    <div id="CpuLoad" class="value">-- %</div>
+    <div class="display">
+      <!-- 時計 -->
+      <div class="clock" id="clock">00:00:00</div>
 
-    <div class="label">GPU 温度</div>
-    <div id="GpuTemp" class="value">-- °C</div>
-    <div class="label">GPU 使用率</div>
-    <div id="GpuLoad" class="value">-- %</div>
+      <!-- CPU / GPU -->
+      <div class="stats">
+        <!-- CPU -->
+        <div class="unit">
+          <div class="label">CPU</div>
+          <div class="temp" id="cpuTemp">0℃</div>
 
-    <div class="label">LiquidPumpSpeed</div>
-    <div id="PumpSpeed" class="value">-- rpm</div>
+          <div class="gauge-wrapper">
+            <div class="gauge" id="cpuGauge"></div>
+            <div class="gauge-load" id="cpuLoad">0%</div>
+          </div>
+        </div>
+
+        <!-- GPU -->
+        <div class="unit">
+          <div class="label">GPU</div>
+          <div class="temp" id="gpuTemp">0℃</div>
+
+          <div class="gauge-wrapper">
+            <div class="gauge" id="gpuGauge"></div>
+            <div class="gauge-load" id="gpuLoad">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 冷却水 -->
+      <div class="liquid">
+        <div class="label">LIQUID</div>
+        <div class="temp" id="liquidTemp">0℃</div>
+      </div>
+    </div>
 
     <script>
+      /* 時計 */
+      function updateClock() {
+        const n = new Date();
+        clock.textContent =
+          `${String(n.getHours()).padStart(2, "0")}:` +
+          `${String(n.getMinutes()).padStart(2, "0")}:` +
+          `${String(n.getSeconds()).padStart(2, "0")}`;
+      }
+      setInterval(updateClock, 100);
+      updateClock();
+
+      /* ゲージ色 */
+      function gaugeColor(v) {
+        if (v >= 95) return "#ff3333";
+        if (v >= 70) return "#ff9800";
+        return "#4caf50";
+      }
+
       /**
        * --------------------------------------------------------
        * Web Integration API を受け取るための必須設定
@@ -65,16 +211,23 @@
             // CPU温度
             const cputemp = cpu.temperature ?? "--";
             // CPUロード（負荷）
-            const cpuload = cpu.load ?? "--";
+            const cpuLoadVal = cpu.load ?? "--";
+            // CPU 表示
+            cpuGauge.style.setProperty("--value", cpuLoadVal);
+            cpuGauge.style.setProperty("--gauge-color", gaugeColor(cpuLoadVal));
+            cpuLoad.textContent = `${cpuLoadVal}%`;
+            cpuTemp.textContent = `${cputemp}℃`;
 
             // GPU温度
             const gputemp = gpu.temperature ?? "--";
             // GPUロード（負荷）
             const gpuload = gpu.load ?? "--";
 
-            // PompSpeed（rpm）
-            const pumpspeed = kraken.pumpSpeed ?? "--";
+            // 水温
+            const liquidTemperature = kraken.liquidTemperature ?? "--";
+            document.getElementById("liquidTemp").innerText = Math.round(liquidTemperature) + " ℃";
 
+            /*
             // HTML に表示
             document.getElementById("CpuTemp").innerText = Math.round(cputemp) + " °C";
             document.getElementById("CpuLoad").innerText = Math.round(cpuload * 100) + " %";
@@ -83,97 +236,30 @@
             document.getElementById("GpuTemp").innerText = Math.round(gputemp) + " °C";
             document.getElementById("GpuLoad").innerText = Math.round(gpuload * 100) + " %";
             document.getElementById("PumpSpeed").innerText = Math.round(pumpspeed) + " rpm";
+            */
           },
         },
       };
 
+      /* デモ用更新 */
       /*
-***export interface MonitoringData {
-  cpus: Cpu[];
-  gpus: Gpu[];
-  ram: Ram;
-  kraken: Kraken;
-}
+      setInterval(() => {
+        const cpuLoadVal = Math.floor(Math.random() * 100);
+        const gpuLoadVal = Math.floor(Math.random() * 100);
 
-***export interface Cpu {
-  name: string;
-  manufacturer: string;
-  codeName: string;
-  socket: string;
+        cpuGauge.style.setProperty("--value", cpuLoadVal);
+        cpuGauge.style.setProperty("--gauge-color", gaugeColor(cpuLoadVal));
+        cpuLoad.textContent = `${cpuLoadVal}%`;
+        cpuTemp.textContent = `${(40 + cpuLoadVal * 0.4) | 0}℃`;
 
-  //** Processor load (0..1) 
-  load: NumberOrUndefined;
+        gpuGauge.style.setProperty("--value", gpuLoadVal);
+        gpuGauge.style.setProperty("--gauge-color", gaugeColor(gpuLoadVal));
+        gpuLoad.textContent = `${gpuLoadVal}%`;
+        gpuTemp.textContent = `${(45 + gpuLoadVal * 0.4) | 0}℃`;
 
-  numCores: NumberOrUndefined;
-  numThreads: NumberOrUndefined;
-
-  temperature: Celsius;
-  minTemperature: Celsius;
-  maxTemperature: Celsius;
-
-  frequency: Megahertz;
-  minFrequency: Megahertz;
-  maxFrequency: Megahertz;
-  stockFrequency: Megahertz;
-
-  fanSpeed: Rpm;
-  minFanSpeed: Rpm;
-  maxFanSpeed: Rpm;
-
-  //** Thermal Design Power 
-  tdp: Watts;
-
-  power: Watts;
-}
-
-***export interface Gpu {
-  name: string;
-
-  //** GPU load (0..1) 
-  load: NumberOrUndefined;
-
-  temperature: Celsius;
-  minTemperature: Celsius;
-  maxTemperature: Celsius;
-
-  frequency: Megahertz;
-  minFrequency: Megahertz;
-  maxFrequency: Megahertz;
-  stockFrequency: Megahertz;
-
-  fanSpeed: Rpm;
-  minFanSpeed: Rpm;
-  maxFanSpeed: Rpm;
-
-  power: Watts;
-}
-
-export interface Ram {
-  totalSize: Mebibytes;
-  inUse: Mebibytes;
-  modules: RamModule[];
-}
-
-export interface RamModule {
-  //** RAM kind (e.g. DDR5) 
-  kind: string;
-  size: Mebibytes;
-
-  //** Manufacturer and model name 
-  model: string;
-
-  frequency: Megahertz;
-  stockFrequency: Megahertz;
-}
-
-export interface Kraken {
-  liquidTemperature: Celsius;
-}
-
-
-
-
-    */
+        liquidTemp.textContent = `${28 + Math.floor(Math.random() * 5)}℃`;
+      }, 1000);
+      */
     </script>
   </body>
 </html>
