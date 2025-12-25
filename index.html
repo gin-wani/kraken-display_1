@@ -252,7 +252,7 @@
             // GPU温度
             const gputemp = Math.round(gpu.temperature) ?? "--";
             // GPUロード（負荷）
-            const gpuload = Math.round(gpu.load * 100) ?? "--";
+            const gpuLoadVal = Math.round(gpu.load * 100) ?? "--";
             // GPU 表示
             gpuGauge.style.setProperty("--value", gpuLoadVal);
             gpuGauge.style.setProperty("--gauge-color", gaugeColor(gpuLoadVal));
