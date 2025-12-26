@@ -162,7 +162,7 @@
 
           <div class="gauge-wrapper">
             <div class="gauge" id="cpuGauge"></div>
-            <div class="gauge-load" id="cpuLoad">00%</div>
+            <div class="gauge-load" id="cpuLoad">00 %</div>
             <div class="gauge-watts" id="cpuWatts">00W</div>
           </div>
         </div>
@@ -174,7 +174,7 @@
 
           <div class="gauge-wrapper">
             <div class="gauge" id="gpuGauge"></div>
-            <div class="gauge-load" id="gpuLoad">00%</div>
+            <div class="gauge-load" id="gpuLoad">00 %</div>
             <div class="gauge-watts" id="gpuWatts">00W</div>
           </div>
         </div>
@@ -236,7 +236,7 @@
             // CPU 表示
             cpuGauge.style.setProperty("--value", cpuLoadVal);
             cpuGauge.style.setProperty("--gauge-color", gaugeColor(cpuLoadVal));
-            cpuLoad.textContent = `${cpuLoadVal}%`;
+            cpuLoad.textContent = `${cpuLoadVal} %`;
             cpuTemp.textContent = `${cputemp}℃`;
             cpuWatts.textContent = `${cpupower}W`;
 
@@ -249,7 +249,7 @@
             // GPU 表示
             gpuGauge.style.setProperty("--value", gpuLoadVal);
             gpuGauge.style.setProperty("--gauge-color", gaugeColor(gpuLoadVal));
-            gpuLoad.textContent = `${gpuLoadVal}%`;
+            gpuLoad.textContent = `${gpuLoadVal} %`;
             gpuTemp.textContent = `${gputemp}℃`;
             gpuWatts.textContent = `${gpupower}W`;
 
