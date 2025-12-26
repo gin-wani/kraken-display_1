@@ -236,9 +236,9 @@
             // CPU 表示
             cpuGauge.style.setProperty("--value", cpuLoadVal);
             cpuGauge.style.setProperty("--gauge-color", gaugeColor(cpuLoadVal));
-            cpuLoad.textContent = `${cpuLoadVal} %`;
-            cpuTemp.textContent = `${cputemp} ℃`;
-            cpuWatts.textContent = `${cpupower} W`;
+            cpuLoad.textContent = `${cpuLoadVal}%`;
+            cpuTemp.textContent = `${cputemp}℃`;
+            cpuWatts.textContent = `${cpupower}W`;
 
             // GPU温度
             const gputemp = Math.round(gpu.temperature) ?? "--";
@@ -251,7 +251,7 @@
             gpuGauge.style.setProperty("--gauge-color", gaugeColor(gpuLoadVal));
             gpuLoad.textContent = `${gpuLoadVal}%`;
             gpuTemp.textContent = `${gputemp}℃`;
-            gpuWatts.textContent = `${gpupower} W`;
+            gpuWatts.textContent = `${gpupower}W`;
 
             // 水温
             const liquidTemperature = kraken.liquidTemperature ?? "--";
