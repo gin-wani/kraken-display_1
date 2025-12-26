@@ -19,19 +19,44 @@
       /* ===============================
        640x640 円形ディスプレイ
        =============================== */
+      .display::before {
+        content: "";
+        position: absolute;
+        inset: 0; /* width/height 640px の代わり */
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 0;
+      }
+
       .display {
+        position: relative; /* ← これを追加（超重要） */
         width: 640px;
         height: 640px;
         border-radius: 50%;
         display: flex;
         flex-direction: column;
         align-items: center;
+
+        /* 背景GIF */
+        background-image: url("totoro.gif");
+        background-size: cover; /* 円全体を埋める */
+        background-position: center;
+        background-repeat: no-repeat;
+
+        /* はみ出し防止（円形を保つため重要） */
+        overflow: hidden;
       }
+
+      .display > * {
+        position: relative;
+        z-index: 1;
+      }
+
       /* ===============================
        1段目：冷却水温
        =============================== */
       .liquid {
-        margin-top: 0px;
+        margin-top: 10px;
         margin-bottom: -55px;
         text-align: center;
       }
