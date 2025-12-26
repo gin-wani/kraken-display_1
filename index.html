@@ -163,7 +163,7 @@
           <div class="gauge-wrapper">
             <div class="gauge" id="cpuGauge"></div>
             <div class="gauge-load" id="cpuLoad">00 %</div>
-            <div class="gauge-watts" id="cpuWatts">00W</div>
+            <div class="gauge-watts" id="cpuWatts">00w</div>
           </div>
         </div>
 
@@ -175,7 +175,7 @@
           <div class="gauge-wrapper">
             <div class="gauge" id="gpuGauge"></div>
             <div class="gauge-load" id="gpuLoad">00 %</div>
-            <div class="gauge-watts" id="gpuWatts">00W</div>
+            <div class="gauge-watts" id="gpuWatts">00w</div>
           </div>
         </div>
       </div>
@@ -238,7 +238,7 @@
             cpuGauge.style.setProperty("--gauge-color", gaugeColor(cpuLoadVal));
             cpuLoad.textContent = `${cpuLoadVal} %`;
             cpuTemp.textContent = `${cputemp}℃`;
-            cpuWatts.textContent = `${cpupower}W`;
+            cpuWatts.textContent = `${cpupower}w`;
 
             // GPU温度
             const gputemp = Math.round(gpu.temperature) ?? "--";
@@ -251,7 +251,7 @@
             gpuGauge.style.setProperty("--gauge-color", gaugeColor(gpuLoadVal));
             gpuLoad.textContent = `${gpuLoadVal} %`;
             gpuTemp.textContent = `${gputemp}℃`;
-            gpuWatts.textContent = `${gpupower}W`;
+            gpuWatts.textContent = `${gpupower}w`;
 
             // 水温
             const liquidTemperature = kraken.liquidTemperature ?? "--";
